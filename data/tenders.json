@@ -1,6 +1,6 @@
 [
   {
-    "id": "AO-1789726461429-0",
+    "id": "AO-1789730589286-0",
     "title": "La Gestion Déléguée du Centre d’Enfouissement et de Valorisation des...",
     "title_ar": "La Gestion Déléguée du Centre d’Enfouissement et de Valorisation des...",
     "title_en": "La Gestion Déléguée du Centre d’Enfouissement et de Valorisation des...",
@@ -10,8 +10,8 @@
     "city": "Tétouan",
     "city_ar": "Tétouan",
     "city_en": "Tétouan",
-    "deadline": "2026-09-20T23:43:54.128Z",
-    "estimatedCost": 2947533,
+    "deadline": "2026-10-16T04:06:51.464Z",
+    "estimated_cost": 4368594,
     "category": "Services",
     "category_ar": "Services",
     "category_en": "Services",
@@ -20,7 +20,7 @@
     "description_en": "La Gestion Déléguée du Centre d’Enfouissement et de Valorisation des déchets ménagers et assimilés « Saddina pour l’Environnement » ainsi que la gestion post-fermeture de l’Ancienne Décharge Réhabilitée de ... La Gestion Déléguée du Centre d’Enfouissement et de Valorisation des déchets ménagers et assimilés « Saddina pour l’Environnement » ainsi que la gestion post-fermeture de l’Ancienne Décharge Réhabilitée de Tétouan."
   },
   {
-    "id": "AO-1789726461429-1",
+    "id": "AO-1789730589287-1",
     "title": "Acquisition d’un véhicule vivier équipé pour le transport de poissons...",
     "title_ar": "Acquisition d’un véhicule vivier équipé pour le transport de poissons...",
     "title_en": "Acquisition d’un véhicule vivier équipé pour le transport de poissons...",
@@ -30,8 +30,8 @@
     "city": "Fès",
     "city_ar": "Fès",
     "city_en": "Fès",
-    "deadline": "2026-09-22T14:28:39.560Z",
-    "estimatedCost": 2680018,
+    "deadline": "2026-10-15T18:01:18.474Z",
+    "estimated_cost": 269193,
     "category": "Fournitures",
     "category_ar": "Fournitures",
     "category_en": "Fournitures",
@@ -40,7 +40,7 @@
     "description_en": "Acquisition d’un véhicule vivier équipé pour le transport de poissons vivants au profit du Centre National d’Hydrobiologie et de Pisciculture d’Azrou, province d’Ifrane, relevant de la Direction Régionale de ... Acquisition d’un véhicule vivier équipé pour le transport de poissons vivants au profit du Centre National d’Hydrobiologie et de Pisciculture d’Azrou, province d’Ifrane, relevant de la Direction Régionale de l’Agence Nationale des Eaux et Forêts de Fès Meknès."
   },
   {
-    "id": "AO-1789726461429-2",
+    "id": "AO-1789730589287-2",
     "title": "La restauration des malades et du personnel de garde du...",
     "title_ar": "La restauration des malades et du personnel de garde du...",
     "title_en": "La restauration des malades et du personnel de garde du...",
@@ -50,8 +50,8 @@
     "city": "Khénifra",
     "city_ar": "Khénifra",
     "city_en": "Khénifra",
-    "deadline": "2026-09-23T21:01:58.898Z",
-    "estimatedCost": 1866917,
+    "deadline": "2026-10-07T10:17:03.762Z",
+    "estimated_cost": 4195413,
     "category": "Services",
     "category_ar": "Services",
     "category_en": "Services",
@@ -60,7 +60,7 @@
     "description_en": "La restauration des malades et du personnel de garde du centre hospitalier provincial de KHENIFRA (hôpital de Khénifra et l’hôpital de proximité de M’rirt, Les centres d’hémodialyse de Khénifra, d’El Kbab et de ... La restauration des malades et du personnel de garde du centre hospitalier provincial de KHENIFRA (hôpital de Khénifra et l’hôpital de proximité de M’rirt, Les centres d’hémodialyse de Khénifra, d’El Kbab et de M’rirt)."
   },
   {
-    "id": "AO-1789726461430-3",
+    "id": "AO-1789730589287-3",
     "title": "Renforcement de l'AEP du centre et des douars relevant de...",
     "title_ar": "Renforcement de l'AEP du centre et des douars relevant de...",
     "title_en": "Renforcement de l'AEP du centre et des douars relevant de...",
@@ -70,8 +70,8 @@
     "city": "Maroc",
     "city_ar": "Maroc",
     "city_en": "Maroc",
-    "deadline": "2026-10-04T23:12:09.098Z",
-    "estimatedCost": 4097604,
+    "deadline": "2026-09-23T11:18:09.263Z",
+    "estimated_cost": 2222383,
     "category": "Travaux",
     "category_ar": "Travaux",
     "category_en": "Travaux",
@@ -80,7 +80,7 @@
     "description_en": "Renforcement de l'AEP du centre et des douars relevant de la commune Ain Lahcen- Lot : Equipement ... Renforcement de l'AEP du centre et des douars relevant de la commune Ain Lahcen- Lot : Equipement"
   },
   {
-    "id": "AO-1789726461430-4",
+    "id": "AO-1789730589287-4",
     "title": "Renforcement de l'AEP du centre et des douars relevant de...",
     "title_ar": "Renforcement de l'AEP du centre et des douars relevant de...",
     "title_en": "Renforcement de l'AEP du centre et des douars relevant de...",
@@ -90,8 +90,8 @@
     "city": "Maroc",
     "city_ar": "Maroc",
     "city_en": "Maroc",
-    "deadline": "2026-09-26T18:06:50.346Z",
-    "estimatedCost": 1238509,
+    "deadline": "2026-10-07T14:49:18.123Z",
+    "estimated_cost": 4974384,
     "category": "Travaux",
     "category_ar": "Travaux",
     "category_en": "Travaux",
@@ -100,7 +100,7 @@
     "description_en": "Renforcement de l'AEP du centre et des douars relevant de la commune Melloussa- Jouamaa- Lot : Conduites ... Renforcement de l'AEP du centre et des douars relevant de la commune Melloussa- Jouamaa- Lot : Conduites"
   },
   {
-    "id": "AO-1789726461430-5",
+    "id": "AO-1789730589287-5",
     "title": "Renforcement de l'AEP du centre et des douars relevant de...",
     "title_ar": "Renforcement de l'AEP du centre et des douars relevant de...",
     "title_en": "Renforcement de l'AEP du centre et des douars relevant de...",
@@ -110,8 +110,8 @@
     "city": "Maroc",
     "city_ar": "Maroc",
     "city_en": "Maroc",
-    "deadline": "2026-09-23T07:55:11.888Z",
-    "estimatedCost": 3958281,
+    "deadline": "2026-09-22T00:07:41.540Z",
+    "estimated_cost": 1939872,
     "category": "Travaux",
     "category_ar": "Travaux",
     "category_en": "Travaux",
@@ -120,7 +120,7 @@
     "description_en": "Renforcement de l'AEP du centre et des douars relevant de la commune Melloussa- Jouamaa- Lot : Génie Civil ... Renforcement de l'AEP du centre et des douars relevant de la commune Melloussa- Jouamaa- Lot : Génie Civil"
   },
   {
-    "id": "AO-1789726461430-6",
+    "id": "AO-1789730589287-6",
     "title": "Sécurisation de l’adduction BOUAGBA- Lot : Conduites ... Sécurisation de...",
     "title_ar": "Sécurisation de l’adduction BOUAGBA- Lot : Conduites ... Sécurisation de...",
     "title_en": "Sécurisation de l’adduction BOUAGBA- Lot : Conduites ... Sécurisation de...",
@@ -130,8 +130,8 @@
     "city": "Ouezzane",
     "city_ar": "Ouezzane",
     "city_en": "Ouezzane",
-    "deadline": "2026-09-21T10:59:53.263Z",
-    "estimatedCost": 2861017,
+    "deadline": "2026-09-21T23:25:24.140Z",
+    "estimated_cost": 2217941,
     "category": "Travaux",
     "category_ar": "Travaux",
     "category_en": "Travaux",
@@ -140,7 +140,7 @@
     "description_en": "Sécurisation de l’adduction BOUAGBA- Lot : Conduites ... Sécurisation de l’adduction BOUAGBA- Lot : Conduites"
   },
   {
-    "id": "AO-1789726461430-7",
+    "id": "AO-1789730589287-7",
     "title": "Travaux de pré-câblage réseaux informatiques et électriques au profit du...",
     "title_ar": "Travaux de pré-câblage réseaux informatiques et électriques au profit du...",
     "title_en": "Travaux de pré-câblage réseaux informatiques et électriques au profit du...",
@@ -150,8 +150,8 @@
     "city": "Maroc",
     "city_ar": "Maroc",
     "city_en": "Maroc",
-    "deadline": "2026-09-18T15:54:43.719Z",
-    "estimatedCost": 936702,
+    "deadline": "2026-10-06T08:01:26.165Z",
+    "estimated_cost": 3135746,
     "category": "Travaux",
     "category_ar": "Travaux",
     "category_en": "Travaux",
@@ -160,7 +160,7 @@
     "description_en": "Travaux de pré-câblage réseaux informatiques et électriques au profit du 1er Arrondissement de Police relevant du District de Police Mehdia (en lot unique). ... Travaux de pré-câblage réseaux informatiques et électriques au profit du 1er Arrondissement de Police relevant du District de Police Mehdia (en lot unique)."
   },
   {
-    "id": "AO-1789726461430-8",
+    "id": "AO-1789730589287-8",
     "title": "Concours architectural pour la conception et le suivi des travaux...",
     "title_ar": "Concours architectural pour la conception et le suivi des travaux...",
     "title_en": "Concours architectural pour la conception et le suivi des travaux...",
@@ -170,8 +170,8 @@
     "city": "Guelmim",
     "city_ar": "Guelmim",
     "city_en": "Guelmim",
-    "deadline": "2026-09-20T20:18:05.218Z",
-    "estimatedCost": 2213491,
+    "deadline": "2026-10-13T16:19:43.789Z",
+    "estimated_cost": 3999349,
     "category": "Services",
     "category_ar": "Services",
     "category_en": "Services",
@@ -180,7 +180,7 @@
     "description_en": "Concours architectural pour la conception et le suivi des travaux de construction de l’annexe du siège de la Région Guelmim Oued Noun ... Concours architectural pour la conception et le suivi des travaux de construction de l’annexe du siège de la Région Guelmim Oued Noun"
   },
   {
-    "id": "AO-1789726461430-9",
+    "id": "AO-1789730589287-9",
     "title": "Achat de six (6) minibus pour le transport scolaire au...",
     "title_ar": "Achat de six (6) minibus pour le transport scolaire au...",
     "title_en": "Achat de six (6) minibus pour le transport scolaire au...",
@@ -190,8 +190,8 @@
     "city": "Errachidia",
     "city_ar": "Errachidia",
     "city_en": "Errachidia",
-    "deadline": "2026-10-14T17:23:14.980Z",
-    "estimatedCost": 2831376,
+    "deadline": "2026-10-14T06:03:52.452Z",
+    "estimated_cost": 4616533,
     "category": "Fournitures",
     "category_ar": "Fournitures",
     "category_en": "Fournitures",
