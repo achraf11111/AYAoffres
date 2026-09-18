@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import TenderCard from "@/components/TenderCard";
 import { Search, SlidersHorizontal, TrendingUp, Building, Clock } from "lucide-react";
-import axios from "axios";
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://umaiswdohfghdeucaqaj.supabase.co';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_YcnVqn1dqExeaDmYKguaQQ_b3JGBZMw';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export default function Home() {
   const { t, language } = useLanguage();
@@ -14,8 +18,13 @@ export default function Home() {
   useEffect(() => {
     const fetchTenders = async () => {
       try {
-        const response = await axios.get('/api/tenders');
-        setTenders(response.data);
+        const { data, error } = await supabase
+          .from('tenders')
+          .select('*')
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        setTenders(data || []);
       } catch (error) {
         console.error("Failed to fetch tenders", error);
       } finally {
