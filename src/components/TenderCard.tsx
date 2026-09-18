@@ -19,14 +19,46 @@ export default function TenderCard({ tender }: { tender: any }) {
   const handleSummarize = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('/api/ai/summarize', {
-        text: description,
-        lang: language
+      const OPENROUTER_API_KEY = process.env.NEXT_PUBLIC_OPENROUTER_API_KEY;
+      if (!OPENROUTER_API_KEY) {
+        setSummary("API Key not found. Please add NEXT_PUBLIC_OPENROUTER_API_KEY to your environment variables.");
+        setLoading(false);
+        return;
+      }
+
+      let prompt = "";
+      if (language === 'ar') {
+        prompt = `لخص طلب العروض هذا في جملتين باللغة العربية، مع التركيز على نوع العمل والمكان: "${description}"`;
+      } else if (language === 'en') {
+        prompt = `Summarize the following tender in 2 sentences in English, focusing on the type of work and location: "${description}"`;
+      } else {
+        prompt = `Résume l'appel d'offres suivant en 2 phrases en français, en te concentrant sur le type de travaux et le lieu : "${description}"`;
+      }
+
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-3-8b-instruct:free",
+          messages: [
+            { role: "system", content: "You are an assistant that summarizes public tenders clearly and concisely." },
+            { role: "user", content: prompt }
+          ]
+        })
       });
-      setSummary(response.data.summary);
+
+      const data = await response.json();
+      if (data.choices && data.choices.length > 0) {
+        setSummary(data.choices[0].message.content);
+      } else {
+        throw new Error("Invalid response");
+      }
     } catch (error) {
       console.error("AI summarization failed", error);
-      setSummary("Failed to generate summary. Did you add the OpenRouter API key?");
+      setSummary("Failed to generate summary. Please check your OpenRouter API key.");
     } finally {
       setLoading(false);
     }
