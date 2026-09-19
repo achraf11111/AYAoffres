@@ -79,7 +79,7 @@ export default function TenderCard({ tender }: { tender: any }) {
           <p className="text-sm text-gray-500 mb-1">{t('deadline')}</p>
           <p className="font-semibold text-red-600 flex items-center justify-end gap-1">
             <CalendarDays className="w-4 h-4" />
-            {new Date(tender.deadline).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR')}
+            {tender.deadline ? new Date(tender.deadline).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR') : '---'}
           </p>
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function TenderCard({ tender }: { tender: any }) {
         </div>
         <div className="flex items-center text-gray-600">
           <Wallet className="w-4 h-4 mr-2 ml-2 text-gray-400" />
-          <span className="text-sm font-medium">{tender.estimatedCost.toLocaleString()} MAD</span>
+          <span className="text-sm font-medium">{tender.estimated_cost ? Number(tender.estimated_cost).toLocaleString() : '---'} MAD</span>
         </div>
       </div>
 
