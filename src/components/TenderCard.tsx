@@ -80,10 +80,12 @@ export default function TenderCard({ tender }: { tender: any }) {
           </span>
           <span className={`inline-block px-3 py-1 ml-2 mr-2 rounded-full text-xs font-medium mb-3 ${
                 tender.status === 'Ouvert' ? 'bg-green-100 text-green-700' : 
-                tender.status === 'Attribue' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                tender.status === 'Attribue' ? 'bg-purple-100 text-purple-700' : 
+                tender.status === 'En cours' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
               }`}>
             {tender.status === 'Ouvert' ? (language === 'ar' ? 'مفتوح' : 'Ouvert') :
                  tender.status === 'Attribue' ? (language === 'ar' ? 'تم التفويت' : 'Attribué') :
+                 tender.status === 'En cours' ? (language === 'ar' ? 'في طور الإنجاز' : 'En cours') :
                  tender.status}
           </span>
           <h3 className="text-xl font-bold text-gray-900 leading-tight mb-2 line-clamp-2">

@@ -42,7 +42,6 @@ function TenderDetailContent() {
   if (loading) {
     return (
       <div className="bg-gray-50 min-h-screen flex flex-col">
-        <Navbar />
         <div className="flex-grow flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
@@ -53,7 +52,6 @@ function TenderDetailContent() {
   if (!tender) {
     return (
       <div className="bg-gray-50 min-h-screen flex flex-col">
-        <Navbar />
         <div className="flex-grow flex flex-col items-center justify-center text-center px-4">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">{language === 'ar' ? 'لم يتم العثور على الصفقة' : 'Appel d\'offres non trouvé'}</h1>
           <button onClick={() => router.push('/')} className="text-blue-600 hover:underline">
@@ -66,7 +64,7 @@ function TenderDetailContent() {
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col">
-      <Navbar />
+      
       
       <main className="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <button 
@@ -84,10 +82,12 @@ function TenderDetailContent() {
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                 tender.status === 'Ouvert' ? 'bg-green-100 text-green-700' : 
-                tender.status === 'Attribue' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                tender.status === 'Attribue' ? 'bg-purple-100 text-purple-700' : 
+                tender.status === 'En cours' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
               }`}>
                 {tender.status === 'Ouvert' ? (language === 'ar' ? 'مفتوح' : 'Ouvert') :
                  tender.status === 'Attribue' ? (language === 'ar' ? 'تم التفويت' : 'Attribué') :
+                 tender.status === 'En cours' ? (language === 'ar' ? 'في طور الإنجاز' : 'En cours') :
                  tender.status}
               </span>
               <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1">
@@ -148,7 +148,7 @@ function TenderDetailContent() {
                       {language === 'ar' ? 'تاريخ النشر' : 'Date de publication'}
                     </p>
                     <p className="font-medium text-gray-900">
-                      {new Date(tender.publish_date).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR')}
+                      {tender.publish_date ? new Date(tender.publish_date).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR') : '---'}
                     </p>
                   </div>
                   
@@ -158,9 +158,15 @@ function TenderDetailContent() {
                       {language === 'ar' ? 'آخر أجل' : 'Date limite'}
                     </p>
                     <p className="font-bold text-red-600">
-                      {new Date(tender.deadline_date).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR')}
-                      {" "}
-                      {new Date(tender.deadline_date).toLocaleTimeString(language === 'ar' ? 'ar-MA' : 'fr-FR', {hour: '2-digit', minute:'2-digit'})}
+                      {tender.deadline_date ? (
+                        <>
+                          {new Date(tender.deadline_date).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR')}
+                          {" "}
+                          {new Date(tender.deadline_date).toLocaleTimeString(language === 'ar' ? 'ar-MA' : 'fr-FR', {hour: '2-digit', minute:'2-digit'})}
+                        </>
+                      ) : (
+                        tender.deadline ? new Date(tender.deadline).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR') : '---'
+                      )}
                     </p>
                   </div>
                 </div>
