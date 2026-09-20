@@ -1,55 +1,95 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import TenderCard from "@/components/TenderCard";
-import { Search, SlidersHorizontal, TrendingUp, Building, Clock } from "lucide-react";
+import { Search, SlidersHorizontal, TrendingUp, Building, Clock, ChevronDown } from "lucide-react";
 import { supabase } from '@/lib/supabase';
 
 export default function HomeClient() {
   const { t, language } = useLanguage();
   const [tenders, setTenders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   
-  useEffect(() => {
-    const fetchTenders = async () => {
-      setLoading(true);
-      try {
-        let query = supabase
-          .from('tenders')
-          .select('*')
-          .order('created_at', { ascending: false });
-          
-        if (searchQuery) {
-          // Supabase text search or basic ilike. using ilike for simpler wildcard match
-          query = query.or(`title.ilike.%${searchQuery}%,buyer.ilike.%${searchQuery}%,reference.ilike.%${searchQuery}%`);
-        }
-        
-        if (selectedCategories.length > 0) {
-          query = query.in('type', selectedCategories);
-        }
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 10;
+  
+  // Track if it's the first render to avoid double fetching
+  const isFirstRender = useRef(true);
 
-        const { data, error } = await query;
-          
-        if (error) throw error;
-        setTenders(data || []);
-      } catch (error) {
-        console.error("Failed to fetch tenders", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchTenders = async (currentPage = 1, isLoadMore = false) => {
+    if (isLoadMore) setLoadingMore(true);
+    else setLoading(true);
     
-    // Add a small debounce for search
+    try {
+      let query = supabase
+        .from('tenders')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false });
+        
+      if (searchQuery) {
+        query = query.or(`title.ilike.%${searchQuery}%,buyer.ilike.%${searchQuery}%,reference.ilike.%${searchQuery}%`);
+      }
+      
+      if (selectedCategories.length > 0) {
+        query = query.in('type', selectedCategories);
+      }
+
+      // Pagination
+      const from = (currentPage - 1) * limit;
+      const to = from + limit - 1;
+      query = query.range(from, to);
+
+      const { data, count, error } = await query;
+        
+      if (error) throw error;
+      
+      const newTenders = data || [];
+      if (newTenders.length < limit) setHasMore(false);
+      else setHasMore(true);
+
+      if (count !== null) setTotalCount(count);
+
+      if (isLoadMore) {
+        setTenders(prev => [...prev, ...newTenders]);
+      } else {
+        setTenders(newTenders);
+      }
+    } catch (error) {
+      console.error("Failed to fetch tenders", error);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
+  // Reset pagination when search or filters change
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      fetchTenders(1, false);
+      return;
+    }
+
     const delayDebounceFn = setTimeout(() => {
-      fetchTenders();
+      setPage(1);
+      fetchTenders(1, false);
     }, 300);
     
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, selectedCategories]);
+
+  const loadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchTenders(nextPage, true);
+  };
 
   const toggleCategory = (cat: string) => {
     setSelectedCategories(prev => 
@@ -162,7 +202,7 @@ export default function HomeClient() {
           <div className="mb-6 flex justify-between items-center">
             <h2 className="text-2xl font-bold text-gray-900">{t('latest_tenders')}</h2>
             <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-3 py-1 rounded-full">
-              {tenders.length} {language === 'ar' ? 'نتائج' : 'résultats'}
+              {totalCount > 0 ? `${totalCount} ${language === 'ar' ? 'نتائج' : 'résultats'}` : ''}
             </span>
           </div>
 
@@ -177,9 +217,30 @@ export default function HomeClient() {
                   <p className="text-gray-500">{language === 'ar' ? 'لا توجد نتائج تطابق بحثك' : 'Aucun résultat trouvé'}</p>
                 </div>
               ) : (
-                tenders.map((tender) => (
-                  <TenderCard key={tender.id} tender={tender} />
-                ))
+                <>
+                  {tenders.map((tender) => (
+                    <TenderCard key={tender.id} tender={tender} />
+                  ))}
+                  
+                  {hasMore && (
+                    <div className="pt-6 pb-12 flex justify-center">
+                      <button 
+                        onClick={loadMore}
+                        disabled={loadingMore}
+                        className="flex items-center gap-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-8 rounded-full transition-colors disabled:opacity-50"
+                      >
+                        {loadingMore ? (
+                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gray-700"></div>
+                        ) : (
+                          <>
+                            <ChevronDown className="w-5 h-5" />
+                            {language === 'ar' ? 'عرض المزيد' : 'Voir plus'}
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
