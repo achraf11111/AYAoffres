@@ -11,9 +11,20 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 flex items-center">
-            <span className="text-2xl font-bold text-blue-600">{t('app_title')}</span>
+            <a href="/" className="text-2xl font-bold text-blue-600 tracking-tight flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-lg font-bold">A</span>
+              </div>
+              {t('app_title')}
+            </a>
           </div>
           
+          <div className="hidden md:flex items-center space-x-8 space-x-reverse text-sm font-medium text-gray-600">
+            <a href="#" className="hover:text-blue-600 transition-colors">{language === 'ar' ? 'الرئيسية' : 'Accueil'}</a>
+            <a href="#" className="hover:text-blue-600 transition-colors">{language === 'ar' ? 'الصفقات' : 'Appels d\'offres'}</a>
+            <a href="#" className="hover:text-blue-600 transition-colors">{language === 'ar' ? 'الأسعار' : 'Tarifs'}</a>
+            <a href="#" className="hover:text-blue-600 transition-colors">{language === 'ar' ? 'اتصل بنا' : 'Contact'}</a>
+          </div>
           <div className="flex items-center space-x-4 gap-4">
             <div className="flex items-center space-x-2 text-sm">
               <Globe className="w-4 h-4 text-gray-500" />

@@ -3,6 +3,7 @@ import { Inter, Cairo } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const cairo = Cairo({ subsets: ["arabic"], variable: "--font-cairo" });
@@ -25,6 +26,7 @@ export default function RootLayout({
           <main className="min-h-screen">
             {children}
           </main>
+          <Footer />
         </LanguageProvider>
       </body>
     </html>
