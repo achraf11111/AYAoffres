@@ -2,18 +2,42 @@
 
 import { useLanguage } from "@/context/LanguageContext";
 import { useState } from "react";
-import { Building2, MapPin, CalendarDays, Wallet, Sparkles } from "lucide-react";
+import { Building2, MapPin, CalendarDays, Wallet, Sparkles, Clock, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function TenderCard({ tender }: { tender: any }) {
   const { language, t } = useLanguage();
   const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const title = tender.title || tender.reference;
   const buyer = tender.buyer || '---';
   const category = tender.type || '---';
   
+  const isAr = language === 'ar';
+  
+  // Format dates
+  const publishDate = tender.publish_date ? new Date(tender.publish_date).toLocaleDateString(isAr ? 'ar-MA' : 'fr-FR') : '---';
+  const deadlineDate = tender.deadline_date ? new Date(tender.deadline_date).toLocaleDateString(isAr ? 'ar-MA' : 'fr-FR') : 
+                       (tender.deadline ? new Date(tender.deadline).toLocaleDateString(isAr ? 'ar-MA' : 'fr-FR') : '---');
+
+  // Calculate days left
+  let daysLeftText = '';
+  let isUrgent = false;
+  if (tender.deadline_date || tender.deadline) {
+    const d = new Date(tender.deadline_date || tender.deadline);
+    const diffTime = d.getTime() - new Date().getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays >= 0) {
+      isUrgent = diffDays <= 3;
+      daysLeftText = isAr ? `باقي ${diffDays} أيام` : `J - ${diffDays}`;
+    } else {
+      daysLeftText = isAr ? 'انتهى الأجل' : 'Expiré';
+    }
+  }
+
   // Create a description fallback since DB doesn't have it explicitly right now
   const description = tender.title || '';
 
@@ -66,76 +90,109 @@ export default function TenderCard({ tender }: { tender: any }) {
     }
   };
 
-  const router = useRouter();
-
   return (
     <div 
       onClick={() => router.push(`/tender?id=${tender.id}`)}
-      className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow cursor-pointer"
+      className="bg-white rounded-xl shadow-sm border border-gray-200 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer overflow-hidden group flex flex-col md:flex-row"
     >
-      <div className="flex justify-between items-start mb-4">
+      <div className="w-full md:w-2 bg-blue-600 hidden md:block"></div>
+      
+      <div className="p-5 md:p-6 flex-grow flex flex-col justify-between">
+        
         <div>
-          <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-medium mb-3">
-            {category}
-          </span>
-          <span className={`inline-block px-3 py-1 ml-2 mr-2 rounded-full text-xs font-medium mb-3 ${
-                tender.status === 'Ouvert' ? 'bg-green-100 text-green-700' : 
-                tender.status === 'Attribue' ? 'bg-purple-100 text-purple-700' : 
-                tender.status === 'En cours' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
-              }`}>
-            {tender.status === 'Ouvert' ? (language === 'ar' ? 'مفتوح' : 'Ouvert') :
-                 tender.status === 'Attribue' ? (language === 'ar' ? 'تم التفويت' : 'Attribué') :
-                 tender.status === 'En cours' ? (language === 'ar' ? 'في طور الإنجاز' : 'En cours') :
+          <div className="flex justify-between items-start mb-3 gap-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="bg-blue-50 text-blue-700 border border-blue-100 px-2.5 py-1 rounded-md text-xs font-semibold">
+                {category}
+              </span>
+              <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${
+                  tender.status === 'Ouvert' ? 'bg-green-100 text-green-700 border-green-200' : 
+                  tender.status === 'Attribue' ? 'bg-purple-100 text-purple-700 border-purple-200' : 
+                  tender.status === 'En cours' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' : 'bg-gray-100 text-gray-700 border-gray-200'
+                }`}>
+                {tender.status === 'Ouvert' ? (isAr ? 'مفتوح' : 'Ouvert') :
+                 tender.status === 'Attribue' ? (isAr ? 'تم التفويت' : 'Attribué') :
+                 tender.status === 'En cours' ? (isAr ? 'في طور الإنجاز' : 'En cours') :
                  tender.status}
-          </span>
-          <h3 className="text-xl font-bold text-gray-900 leading-tight mb-2 line-clamp-2">
+              </span>
+            </div>
+            
+            {daysLeftText && (
+              <div className={`flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-md border shrink-0 ${
+                isUrgent ? 'bg-red-50 text-red-600 border-red-100' : 'bg-orange-50 text-orange-600 border-orange-100'
+              }`}>
+                <Clock className="w-3.5 h-3.5" />
+                <span>{daysLeftText}</span>
+              </div>
+            )}
+          </div>
+
+          <h3 className="text-lg font-bold text-gray-900 leading-snug mb-4 group-hover:text-blue-600 transition-colors line-clamp-2">
             {title}
           </h3>
-        </div>
-        <div className="text-right flex-shrink-0 ml-4 rtl:mr-4 rtl:ml-0">
-          <p className="text-sm text-gray-500 mb-1">{t('deadline')}</p>
-          <p className="font-semibold text-red-600 flex items-center justify-end gap-1">
-            <CalendarDays className="w-4 h-4" />
-            {tender.deadline_date ? new Date(tender.deadline_date).toLocaleDateString(language === 'ar' ? 'ar-MA' : 'fr-FR') : '---'}
-          </p>
-        </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="flex items-center text-gray-600">
-          <Building2 className="w-4 h-4 mr-2 ml-2 text-gray-400 flex-shrink-0" />
-          <span className="text-sm truncate" title={buyer}>{buyer}</span>
-        </div>
-        <div className="flex items-center text-gray-600">
-          <Wallet className="w-4 h-4 mr-2 ml-2 text-gray-400 flex-shrink-0" />
-          <span className="text-sm font-medium">{tender.initial_estimated_cost ? Number(tender.initial_estimated_cost).toLocaleString('fr-FR') : '---'} MAD</span>
-        </div>
-      </div>
-
-      {tender.winner_name && (
-        <div className="mb-4 bg-green-50 p-3 rounded-lg border border-green-100 flex items-center justify-between">
-          <span className="text-sm text-green-800 font-medium">🏆 {language === 'ar' ? 'الفائز' : 'Attributaire'}: {tender.winner_name}</span>
-        </div>
-      )}
-
-      {summary && (
-        <div className="bg-purple-50 rounded-lg p-4 mb-4 border border-purple-100" onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center text-purple-800 font-medium text-sm mb-2">
-            <Sparkles className="w-4 h-4 mr-2 ml-2" />
-            {t('summary')}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-4 mb-4">
+            <div className="flex items-start gap-2 text-sm text-gray-600">
+              <Building2 className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
+              <span className="line-clamp-1" title={buyer}>{buyer}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <MapPin className="w-4 h-4 text-gray-400 shrink-0" />
+              <span>{tender.city || (isAr ? 'المغرب' : 'Maroc')}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-sm text-gray-600 font-medium">
+              <CalendarDays className="w-4 h-4 text-gray-400 shrink-0" />
+              <span>{deadlineDate}</span>
+            </div>
+            
+            {tender.initial_estimated_cost && (
+              <div className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+                <Wallet className="w-4 h-4 text-gray-400 shrink-0" />
+                <span>{Number(tender.initial_estimated_cost).toLocaleString('fr-FR')} MAD</span>
+              </div>
+            )}
           </div>
-          <p className="text-purple-900 text-sm leading-relaxed">{summary}</p>
         </div>
-      )}
 
-      <div className="pt-4 border-t border-gray-100 flex justify-end">
+        {tender.winner_name && (
+          <div className="mb-4 bg-green-50 px-3 py-2 rounded-lg border border-green-100 inline-flex items-center">
+            <span className="text-sm text-green-800 font-medium">🏆 {isAr ? 'الفائز' : 'Attributaire'}: {tender.winner_name}</span>
+          </div>
+        )}
+
+        {summary && (
+          <div className="bg-purple-50 rounded-lg p-4 mb-4 border border-purple-100 mt-2" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center text-purple-800 font-medium text-sm mb-2">
+              <Sparkles className="w-4 h-4 mr-2 ml-2" />
+              {t('summary')}
+            </div>
+            <p className="text-purple-900 text-sm leading-relaxed">{summary}</p>
+          </div>
+        )}
+
+      </div>
+
+      <div className="bg-gray-50 border-t md:border-t-0 md:border-l border-gray-100 p-5 flex flex-col justify-center items-center md:items-end min-w-[200px] shrink-0 gap-3">
+        <p className="text-xs text-gray-500 text-center md:text-right hidden md:block font-mono bg-white px-2 py-1 border border-gray-200 rounded">
+          Réf: {tender.reference || tender.id.split('-').slice(0, 2).join('-')}
+        </p>
+        
         <button 
           onClick={handleSummarize}
           disabled={loading || summary !== null}
-          className="flex items-center justify-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full flex items-center justify-center px-4 py-2 bg-white border border-purple-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <Sparkles className="w-4 h-4 mr-2 ml-2" />
+          <Sparkles className="w-4 h-4 mr-2" />
           {loading ? t('summarizing') : t('summarize_ai')}
+        </button>
+
+        <button 
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+        >
+          {t('view_details')}
+          <ArrowRight className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
         </button>
       </div>
     </div>
