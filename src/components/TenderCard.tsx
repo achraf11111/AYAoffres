@@ -3,7 +3,7 @@
 import { useLanguage } from "@/context/LanguageContext";
 import { useState } from "react";
 import { Building2, MapPin, CalendarDays, Wallet, Sparkles } from "lucide-react";
-import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function TenderCard({ tender }: { tender: any }) {
   const { language, t } = useLanguage();
@@ -66,9 +66,11 @@ export default function TenderCard({ tender }: { tender: any }) {
     }
   };
 
+  const router = useRouter();
+
   return (
     <div 
-      onClick={() => window.location.href = `/tender?id=${tender.id}`}
+      onClick={() => router.push(`/tender?id=${tender.id}`)}
       className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow cursor-pointer"
     >
       <div className="flex justify-between items-start mb-4">
