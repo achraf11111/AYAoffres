@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, Building, Calendar, FileText, CheckCircle, Tag, DollarSign } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import Navbar from "@/components/Navbar";
 
-export default function TenderDetail() {
-  const { id } = useParams();
+function TenderDetailContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
   const router = useRouter();
   const { t, language } = useLanguage();
   
@@ -184,5 +185,13 @@ export default function TenderDetail() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function TenderDetail() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TenderDetailContent />
+    </Suspense>
   );
 }
