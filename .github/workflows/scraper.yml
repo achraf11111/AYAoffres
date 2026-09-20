@@ -1,0 +1,32 @@
+name: Daily Tender Scraper
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Run at 2 AM everyday
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+
+    - name: Run historical scraper
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      run: node scripts/historical_scraper.js

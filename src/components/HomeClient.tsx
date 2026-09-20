@@ -4,11 +4,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import TenderCard from "@/components/TenderCard";
 import { Search, SlidersHorizontal, TrendingUp, Building, Clock } from "lucide-react";
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://umaiswdohfghdeucaqaj.supabase.co';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_YcnVqn1dqExeaDmYKguaQQ_b3JGBZMw';
-const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/lib/supabase';
 
 export default function HomeClient() {
   const { t, language } = useLanguage();

@@ -2,8 +2,8 @@ const { chromium } = require('playwright');
 const cheerio = require('cheerio');
 const { createClient } = require('@supabase/supabase-js');
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'YOUR_SUPABASE_URL';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_KEY';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://umaiswdohfghdeucaqaj.supabase.co';
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVtYWlzd2RvaGZnaGRldWNhcWFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3MjI1NDksImV4cCI6MjEwNTI5ODU0OX0._oVjpKUmamVCVTXQ1DNbuQcP3OfJj-GtyKq2c507ZQo';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 (async () => {
@@ -29,48 +29,53 @@ const supabase = createClient(supabaseUrl, supabaseKey);
         const html = await page.content();
         const $ = cheerio.load(html);
         
-        $('.actions').parent().each((i, el) => {
-            const raw = $(el).text().replace(/\s+/g, ' ').trim();
-            if(raw && raw.includes('Objet :')) {
-                // Same robust parsing logic as your parse_real_data.js
-                let category = 'Services';
-                if (raw.includes('Travaux')) category = 'Travaux';
-                if (raw.includes('Fournitures')) category = 'Fournitures';
-                if (raw.includes('Etudes')) category = 'Etudes';
+        $('tr').each((i, el) => {
+            const ref = $(el).find('td.col-450 span.ref').text().trim();
+            if (!ref) return;
 
-                const objetMatch = raw.match(/Objet\s*:\s*(.*?)(Acheteur public|$)/);
-                const description = objetMatch ? objetMatch[1].trim() : 'Description non disponible';
-                const title = description.split(' ').slice(0, 10).join(' ') + '...';
+            const fullObjet = $(el).find('.info-bulle[id$="_infosBullesObjet"] div').text().trim();
+            const objetDivText = $(el).find('td.col-450 .objet-line:contains("Objet")').text();
+            const objetMatch = objetDivText.match(/Objet\s*:\s*([\s\S]*?)(?:\.\.\.|$)/);
+            const description = fullObjet || (objetMatch ? objetMatch[1].replace(/\s+/g, ' ').trim() : '');
+            const title = description.split(' ').slice(0, 10).join(' ') + (description.split(' ').length > 10 ? '...' : '');
 
-                const acheteurMatch = raw.match(/Acheteur public\s*:\s*(.*?)\.\.\./);
-                const buyer = acheteurMatch ? acheteurMatch[1].trim() : 'Acheteur inconnu';
+            const acheteurDivText = $(el).find('td.col-450 .objet-line:contains("Acheteur public")').text();
+            const acheteurMatch = acheteurDivText.match(/Acheteur public\s*:\s*([\s\S]*)/);
+            const buyer = acheteurMatch ? acheteurMatch[1].replace(/\s+/g, ' ').trim() : '';
 
-                const moroccanCities = ['Casablanca', 'Rabat', 'Tanger', 'Marrakech', 'Fès', 'Meknès', 'Tétouan', 'Agadir', 'Oujda'];
-                let city = 'Maroc';
-                for (const c of moroccanCities) {
-                  if (raw.toUpperCase().includes(c.toUpperCase())) {
-                    city = c;
-                    break;
-                  }
+            const lieuText = $(el).find('td.col-90[headers="cons_lieuExe"] .bloc-info-bulle .info-bulle div').text().trim();
+            const city = lieuText || 'Maroc';
+
+            const category = $(el).find('td.col-90[headers="cons_ref"] div[id$="_panelBlocCategorie"]').text().replace(/\s+/g, ' ').trim() || 'Services';
+
+            const dateLimitHtml = $(el).find('td.col-60[headers="cons_dateEnd"] .cloture-line').first().html(); 
+            let deadline = null;
+            if (dateLimitHtml) {
+                const cleanDate = dateLimitHtml.replace(/<br\s*\/?>/i, ' ').replace(/\s+/g, ' ').trim();
+                const dateMatch = cleanDate.match(/(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2})/);
+                if (dateMatch) {
+                    const [_, dd, mm, yyyy, hh, min] = dateMatch;
+                    deadline = new Date(`${yyyy}-${mm}-${dd}T${hh}:${min}:00Z`).toISOString();
                 }
-
-                // Simulate historical winner extraction (Needs real URL navigation for actual results)
-                const isHistorical = Math.random() > 0.5;
-
-                extractedTenders.push({
-                  id: `AO-${Date.now()}-${currentPage}-${i}`,
-                  title, title_ar: title, title_en: title,
-                  buyer, buyer_ar: buyer, buyer_en: buyer,
-                  city, city_ar: city, city_en: city,
-                  category, category_ar: category, category_en: category,
-                  description, description_ar: description, description_en: description,
-                  deadline: new Date().toISOString(),
-                  estimated_cost: Math.floor(Math.random() * 5000000) + 100000,
-                  status: isHistorical ? "Attribue" : "En cours",
-                  winner_name: isHistorical ? "Société Marocaine BTP" : null,
-                  winning_amount: isHistorical ? Math.floor(Math.random() * 4000000) : null
-                });
             }
+
+            const linkHref = $(el).find('td.actions[headers="cons_actions"] a[href*="EntrepriseDetailConsultation"]').attr('href');
+            const source_url = linkHref ? `https://www.marchespublics.gov.ma/${linkHref.replace(/^\?/, 'index.php?')}` : null;
+
+            extractedTenders.push({
+                id: ref,
+                title, title_ar: title, title_en: title,
+                buyer, buyer_ar: buyer, buyer_en: buyer,
+                city, city_ar: city, city_en: city,
+                category, category_ar: category, category_en: category,
+                description, description_ar: description, description_en: description,
+                deadline,
+                estimated_cost: null, // Not in the main table
+                status: "En cours",
+                winner_name: null,    // Needs to be scraped from results page
+                winning_amount: null, // Needs to be scraped from results page
+                source_url
+            });
         });
 
         // Click next page
