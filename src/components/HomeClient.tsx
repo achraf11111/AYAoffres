@@ -11,13 +11,28 @@ export default function HomeClient() {
   const [tenders, setTenders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  
   useEffect(() => {
     const fetchTenders = async () => {
+      setLoading(true);
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('tenders')
           .select('*')
           .order('created_at', { ascending: false });
+          
+        if (searchQuery) {
+          // Supabase text search or basic ilike. using ilike for simpler wildcard match
+          query = query.or(`title.ilike.%${searchQuery}%,buyer.ilike.%${searchQuery}%,reference.ilike.%${searchQuery}%`);
+        }
+        
+        if (selectedCategories.length > 0) {
+          query = query.in('type', selectedCategories);
+        }
+
+        const { data, error } = await query;
           
         if (error) throw error;
         setTenders(data || []);
@@ -27,8 +42,20 @@ export default function HomeClient() {
         setLoading(false);
       }
     };
-    fetchTenders();
-  }, []);
+    
+    // Add a small debounce for search
+    const delayDebounceFn = setTimeout(() => {
+      fetchTenders();
+    }, 300);
+    
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchQuery, selectedCategories]);
+
+  const toggleCategory = (cat: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]
+    );
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -47,6 +74,8 @@ export default function HomeClient() {
               <Search className="w-5 h-5 text-gray-400" />
               <input 
                 type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t('search_placeholder')}
                 className="w-full py-3 px-4 text-gray-900 outline-none bg-transparent"
               />
@@ -100,9 +129,14 @@ export default function HomeClient() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">{language === 'ar' ? 'القطاع' : 'Catégorie'}</label>
                 <div className="space-y-2">
-                  {['Travaux', 'Services', 'Fournitures', 'Etudes'].map((cat) => (
-                    <label key={cat} className="flex items-center">
-                      <input type="checkbox" className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
+                  {['Travaux', 'Services', 'Fournitures'].map((cat) => (
+                    <label key={cat} className="flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={selectedCategories.includes(cat)}
+                        onChange={() => toggleCategory(cat)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer w-4 h-4" 
+                      />
                       <span className="ml-2 text-sm text-gray-600">{cat}</span>
                     </label>
                   ))}
@@ -138,9 +172,15 @@ export default function HomeClient() {
             </div>
           ) : (
             <div className="space-y-6">
-              {tenders.map((tender) => (
-                <TenderCard key={tender.id} tender={tender} />
-              ))}
+              {tenders.length === 0 ? (
+                <div className="text-center py-12 bg-white rounded-xl shadow-sm border border-gray-100">
+                  <p className="text-gray-500">{language === 'ar' ? 'لا توجد نتائج تطابق بحثك' : 'Aucun résultat trouvé'}</p>
+                </div>
+              ) : (
+                tenders.map((tender) => (
+                  <TenderCard key={tender.id} tender={tender} />
+                ))
+              )}
             </div>
           )}
         </div>
